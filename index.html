@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dot Portrait</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <aside class="panel">
+    <header>
+      <h1>Dot Portrait</h1>
+      <p class="status" id="status">Loading models…</p>
+    </header>
+
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="image/*" multiple hidden />
+      <span>Drop portraits here<br /><small>or click to choose</small></span>
+    </label>
+
+    <section>
+      <h2>Framing</h2>
+      <div class="row"><label for="zoom">Zoom</label><input type="range" id="zoom" min="0.6" max="1.8" step="0.01" value="1" /><output></output></div>
+      <div class="row"><label for="offsetY">Vertical</label><input type="range" id="offsetY" min="-0.3" max="0.3" step="0.01" value="0" /><output></output></div>
+      <div class="row"><label for="aspect">Aspect</label>
+        <select id="aspect">
+          <option value="1">1 : 1</option>
+          <option value="1.25">4 : 5</option>
+          <option value="0.8">5 : 4</option>
+        </select>
+      </div>
+    </section>
+
+    <section>
+      <h2>Grid</h2>
+      <div class="row"><label for="cols">Columns</label><input type="range" id="cols" min="32" max="160" step="1" value="80" /><output></output></div>
+      <div class="row"><label for="dotSize">Dot size</label><input type="range" id="dotSize" min="0.3" max="1" step="0.01" value="0.72" /><output></output></div>
+      <div class="row"><label for="shape">Shape</label>
+        <select id="shape">
+          <option value="square">Square</option>
+          <option value="circle">Circle</option>
+        </select>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tone</h2>
+      <div class="row"><label for="levels">Levels</label><input type="range" id="levels" min="2" max="8" step="1" value="5" /><output></output></div>
+      <div class="row"><label for="contrast">Contrast</label><input type="range" id="contrast" min="0.5" max="2" step="0.01" value="1.15" /><output></output></div>
+      <div class="row"><label for="brightness">Brightness</label><input type="range" id="brightness" min="-0.4" max="0.4" step="0.01" value="0" /><output></output></div>
+      <div class="row"><label for="gamma">Gamma</label><input type="range" id="gamma" min="0.4" max="2" step="0.01" value="1" /><output></output></div>
+      <div class="row"><label for="detail">Detail</label><input type="range" id="detail" min="0" max="2" step="0.01" value="0.8" /><output></output></div>
+      <div class="row"><label for="minInk">Lightest</label><input type="range" id="minInk" min="0" max="0.6" step="0.01" value="0.12" /><output></output></div>
+      <div class="row"><label for="maxInk">Darkest</label><input type="range" id="maxInk" min="0.4" max="1" step="0.01" value="0.9" /><output></output></div>
+      <div class="row"><label for="dither">Dither</label><input type="range" id="dither" min="0" max="1" step="0.01" value="0.8" /><output></output></div>
+      <div class="row"><label for="fadeRows">Bottom fade</label><input type="range" id="fadeRows" min="0" max="20" step="1" value="7" /><output></output></div>
+    </section>
+
+    <section>
+      <h2>Color</h2>
+      <div class="row"><label for="ink">Ink</label><input type="color" id="ink" value="#111111" /></div>
+      <div class="row"><label for="paper">Paper</label><input type="color" id="paper" value="#ffffff" /></div>
+      <div class="row"><label for="transparent">Transparent</label><input type="checkbox" id="transparent" /></div>
+    </section>
+
+    <section>
+      <h2>Export</h2>
+      <div class="row"><label for="exportSize">Width (px)</label><input type="number" id="exportSize" min="200" max="8000" step="100" value="1600" /></div>
+      <div class="buttons">
+        <button id="allPng" disabled>Download all PNG</button>
+        <button id="allSvg" disabled>Download all SVG</button>
+      </div>
+      <button class="ghost" id="reset">Reset settings</button>
+    </section>
+  </aside>
+
+  <main id="gallery">
+    <p class="empty" id="empty">Upload one or more portraits. The background is removed, the face is framed, and the photo is converted to a dot grid — all in your browser.</p>
+  </main>
+
+  <template id="cardTpl">
+    <figure class="card">
+      <div class="stage">
+        <canvas></canvas>
+        <div class="busy">Analyzing…</div>
+      </div>
+      <figcaption>
+        <span class="name"></span>
+        <span class="actions">
+          <button data-act="png">PNG</button>
+          <button data-act="svg">SVG</button>
+          <button data-act="recenter" title="Reset crop">↺</button>
+          <button data-act="remove" title="Remove">✕</button>
+        </span>
+      </figcaption>
+    </figure>
+  </template>
+
+  <script>
+    // ES modules don't load from file://, so the app would silently do nothing.
+    if (location.protocol === "file:") {
+      document.getElementById("status").textContent = "Open via a local server, not as a file";
+      document.getElementById("status").className = "status error";
+      document.getElementById("empty").innerHTML =
+        "This page has to be served over http. In this folder run<br><code>python3 -m http.server 8000</code><br>then open <a href=\"http://localhost:8000\">http://localhost:8000</a>.";
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
